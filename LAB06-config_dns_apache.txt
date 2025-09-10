@@ -1,0 +1,53 @@
+#Roteiro para a Atividade Prática 6: Servidores DNS e Web
+
+# --- PARTE 1: APACHE WEB SERVER ---
+
+# 1. Instalar o Apache2
+apt-get update && apt-get install -y apache2
+
+# 2. Criar uma página de teste
+# O arquivo principal fica em /var/www/html/index.html
+echo "<h1>Servidor Web da Empresa - OK</h1>" > /var/www/html/index.html
+
+# 3. Teste localmente
+# Em um navegador na VM (se houver interface gráfica), acesse http://localhost
+# Ou no terminal: curl http://127.0.0.1
+
+
+# --- PARTE 2: DNS (BIND9) ---
+
+# 1. Instalar o BIND9
+apt-get install -y bind9
+
+# 2. Configurar uma zona local (Exemplo para 'empresa.local')
+# Edite o arquivo /etc/bind/named.conf.local e adicione:
+#
+# zone "empresa.local" {
+#     type master;
+#     file "/etc/bind/db.empresa.local";
+# };
+
+# 3. Criar o arquivo da zona
+# Crie o arquivo /etc/bind/db.empresa.local com o seguinte conteúdo
+# (substitua <IP_DO_SEU_SERVIDOR> pelo IP da sua VM):
+#
+# $TTL    604800
+# @       IN      SOA     ns1.empresa.local. root.empresa.local. (
+#                               2         ; Serial
+#                          604800         ; Refresh
+#                           86400         ; Retry
+#                         2419200         ; Expire
+#                          604800 )       ; Negative Cache TTL
+# ;
+# @       IN      NS      ns1.empresa.local.
+# ns1     IN      A       <IP_DO_SEU_SERVIDOR>
+# www     IN      A       <IP_DO_SEU_SERVIDOR>
+
+# 4. Configurar o cliente DNS (resolver)
+# Edite /etc/resolv.conf e coloque o seu servidor como o primeiro nameserver:
+# nameserver 127.0.0.1
+
+# 5. Reiniciar e testar
+systemctl restart bind9
+# Teste a resolução de nome:
+dig www.empresa.local
