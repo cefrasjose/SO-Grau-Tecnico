@@ -1,4 +1,4 @@
-# [cite_start]Roteiro de Comandos para a Atividade Prática 5: Servidor de Arquivos SAMBA [cite: 39]
+#Roteiro de Comandos para a Atividade Prática 5: Servidor de Arquivos SAMBA
 
 # 1. Instalação do SAMBA
 apt-get update && apt-get install -y samba
