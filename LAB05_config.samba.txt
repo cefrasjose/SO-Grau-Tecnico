@@ -1,0 +1,45 @@
+# [cite_start]Roteiro de Comandos para a Atividade Prática 5: Servidor de Arquivos SAMBA [cite: 39]
+
+# 1. Instalação do SAMBA
+apt-get update && apt-get install -y samba
+
+# 2. Adicionar usuários do sistema ao SAMBA
+# (Repita para cada usuário que precisará de acesso autenticado)
+smbpasswd -a dev_senior
+smbpasswd -a dev_junior
+
+# 3. Criar diretório para o compartilhamento público
+mkdir -p /srv/samba/publico
+chown nobody:nogroup /srv/samba/publico
+chmod 777 /srv/samba/publico
+
+# 4. Edição do arquivo /etc/samba/smb.conf
+# Adicione os seguintes blocos no FINAL do arquivo:
+
+# --- Início do Trecho de Configuração ---
+
+[Publico]
+   comment = Compartilhamento Publico
+   path = /srv/samba/publico
+   browsable = yes
+   writable = yes
+   guest ok = yes
+   read only = no
+
+[Projetos]
+   comment = Acesso restrito para Desenvolvedores
+   path = /srv/projetos
+   valid users = @desenvolvedores
+   read only = no
+   browsable = yes
+   writable = yes
+
+# --- Fim do Trecho de Configuração ---
+
+
+# 5. Reiniciar o serviço SAMBA
+systemctl restart smbd
+systemctl restart nmbd
+
+# 6. Verificar a sintaxe do arquivo de configuração
+testparm
